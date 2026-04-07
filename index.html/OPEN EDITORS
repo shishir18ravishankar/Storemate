@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>StoreMate</title>
+  <style>
+    body {
+      font-family: Arial;
+      background: #f2f2f2;
+      display: flex;
+      justify-content: center;
+      margin: 0;
+    }
+    .app {
+      width: 350px;
+      height: 600px;
+      background: white;
+      display: flex;
+      flex-direction: column;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      margin-top: 20px;
+    }
+    .header {
+      background: #4CAF50;
+      color: white;
+      padding: 12px;
+      text-align: center;
+      font-weight: bold;
+    }
+    .dashboard {
+      padding: 10px;
+      background: #e8f5e9;
+      font-size: 14px;
+    }
+    .chat {
+      flex: 1;
+      padding: 10px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+    .msg {
+      margin: 5px 0;
+      padding: 8px 10px;
+      border-radius: 10px;
+      max-width: 70%;
+    }
+    .user {
+      background: #dcf8c6;
+      align-self: flex-end;
+    }
+    .bot {
+      background: #eee;
+      align-self: flex-start;
+    }
+    .input {
+      display: flex;
+      padding: 10px;
+      border-top: 1px solid #ddd;
+    }
+    input {
+      flex: 1;
+      padding: 8px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+    button {
+      margin-left: 5px;
+      padding: 8px 12px;
+      border: none;
+      border-radius: 8px;
+      background: #4CAF50;
+      color: white;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<div class="app">
+  <div class="header">StoreMate</div>
+
+  <div class="dashboard">
+    Stock: <span id="stock">0</span> |
+    Sales: <span id="sales">0</span>
+  </div>
+
+  <div class="chat" id="chat"></div>
+
+  <div class="input">
+    <input id="inputText" placeholder="Type message..." />
+    <button onclick="sendMessage()">Send</button>
+  </div>
+</div>
+
+<script>
+  let stock = 0;
+  let sales = 0;
+
+  function addMessage(text, sender) {
+    const chat = document.getElementById("chat");
+    const msg = document.createElement("div");
+    msg.className = "msg " + sender;
+    msg.innerText = text;
+    chat.appendChild(msg);
+    chat.scrollTop = chat.scrollHeight;
+  }
+
+  function updateDashboard() {
+    document.getElementById("stock").innerText = stock;
+    document.getElementById("sales").innerText = sales;
+  }
+
+  function sendMessage() {
+    const input = document.getElementById("inputText");
+    const text = input.value.toLowerCase();
+
+    if (!text) return;
+
+    addMessage(text, "user");
+
+    let reply = "Sorry, I didn't understand.";
+
+    if (text.includes("add")) {
+      const num = parseInt(text.match(/\d+/));
+      if (!isNaN(num)) {
+        stock += num;
+        reply = "Added " + num + " items.";
+      }
+    } 
+    else if (text.includes("sold")) {
+      const num = parseInt(text.match(/\d+/));
+      if (!isNaN(num)) {
+        stock -= num;
+        sales += num;
+        reply = "Sale recorded: " + num + " items sold.";
+      }
+    } 
+    else if (text.includes("stock")) {
+      reply = "Current stock is " + stock;
+    }
+
+    updateDashboard();
+    addMessage(reply, "bot");
+
+    input.value = "";
+  }
+</script>
+
+</body>
+</html>
